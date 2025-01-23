@@ -13,11 +13,11 @@ Result http_download(const char *url, const char *destination)
 	u32 statuscode=0;
 	u32 contentsize=0, readsize=0, size=0;
 	u8 *buf, *lastbuf; // todo: optimize for bigger files
-  FILE *file = fopen(destination, "wb");
-  if (!file) {
-    printf("Failed to open the destination file\n");
-    return;
-  }
+	FILE *file = fopen(destination, "wb");
+	if (!file) {
+	  printf("Failed to open the destination file\n");
+	  return -1;
+	}
 
 	printf("Downloading %s\n",url);
 
@@ -129,7 +129,7 @@ Result http_download(const char *url, const char *destination)
 	}
 
 	printf("downloaded size: %" PRId32 "\n",size);
-
+        if(size > 4294967296) size = 4294967296;
 	fwrite(buf, 1, size, file);
   gspWaitForVBlank();
 
