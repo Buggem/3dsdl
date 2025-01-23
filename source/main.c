@@ -156,9 +156,25 @@ int main()
 
 	
 	swkbdInit(&swkbd, SWKBD_TYPE_NORMAL, 3, -1);
+	swkbdSetHintText(&swkbd, "Enter the URL to download from");
 	swkbdInputText(&swkbd, urlname, sizeof(urlname)-1);
+	urlname[sizeof(urlname)-1] = 0;
+	
 	swkbdInit(&swkbd, SWKBD_TYPE_NORMAL, 3, -1);
+	swkbdSetHintText(&swkbd, "Enter the output filename");
 	swkbdInputText(&swkbd, filename, sizeof(filename)-1);
+	filename[sizeof(filename)-1] = 0; // dont fuck yourself trying to go farther than far
+
+	printf("Chosen URL: %s\nChosen output filename: %s\n\nPress START to proceed", urlname, filename);
+	while (aptMainLoop())
+	{
+		gspWaitForVblank();
+		hidScanInput();
+		
+		u32 kDown = hidKeysDown();
+		if (kDown & KEY_START)
+			break; // continue
+	}
 	
 	ret=http_download(urlname, filename);
 	// Try the following for redirection to the above URL.
@@ -170,8 +186,6 @@ int main()
 	{
 		gspWaitForVBlank();
 		hidScanInput();
-
-		// Your code goes here
 
 		u32 kDown = hidKeysDown();
 		if (kDown & KEY_START)
