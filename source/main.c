@@ -168,12 +168,19 @@ int main()
 	printf("Chosen URL: %s\nChosen output filename: %s\n\nPress START to proceed", urlname, filename);
 	while (aptMainLoop())
 	{
-		gspWaitForVblank();
+		gspWaitForVBlank();
 		hidScanInput();
 		
 		u32 kDown = hidKeysDown();
 		if (kDown & KEY_START)
 			break; // continue
+		if (kDown & KEY_SELECT)
+		{
+			// Exit on Select
+			httpcExit();
+			gfxExit();
+			return 0;
+		}
 	}
 	
 	ret=http_download(urlname, filename);
