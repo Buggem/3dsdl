@@ -131,10 +131,10 @@ Result http_download(const char *url, const char *destination)
 	printf("downloaded size: %" PRId32 "\n",size);
         if(size > 4294967296) size = 4294967296;
 	fwrite(buf, 1, size, file);
-  gspWaitForVBlank();
+	gspWaitForVBlank();
 
 	httpcCloseContext(&context);
-  fclose(file);
+	fclose(file);
 	free(buf);
 	if (newurl!=NULL) free(newurl);
 
@@ -144,12 +144,23 @@ Result http_download(const char *url, const char *destination)
 int main()
 {
 	Result ret=0;
+	static SwkbdState swkbd;
+	static char urlname[1042];
+	static char filename[256];
+	
 	gfxInitDefault();
+	hidScanInput();
 	httpcInit(0); // Buffer size when POST/PUT.
 
 	consoleInit(GFX_BOTTOM,NULL);
 
-	ret=http_download("http://devkitpro.org/misc/httpexample_rawimg.rgb", "example.rgb");
+	
+	swkbdInit(&swkbd, SWKBD_TYPE_NORMAL, 3, -1);
+	swkbdInputText(&swkbd, urlname, sizeof(urlname)-1);
+	swkbdInit(&swkbd, SWKBD_TYPE_NORMAL, 3, -1);
+	swkbdInputText(&swkbd, filename, sizeof(filename)-1);
+	
+	ret=http_download(urlname, filename);
 	// Try the following for redirection to the above URL.
 	// ret=http_download("http://tinyurl.com/hd8jwqx");
 	printf("return from http_download: %" PRId32 "\n",ret);
